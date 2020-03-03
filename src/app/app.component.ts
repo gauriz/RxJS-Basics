@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { OperatorsService } from './_service/operators.service';
+
 
 @Component({
   selector: 'app-root',
@@ -9,10 +11,15 @@ import { Observable } from 'rxjs';
 export class AppComponent implements OnInit {
   title = 'RxJS-Basics';
 
+  constructor(private service: OperatorsService) {
+
+  }
+
   ngOnInit() {
-    this.sampleCreationOfObservable();
+    // this.sampleCreationOfObservable();
     // this.observableLifeCycle();
     // this.observablesAndFunctions();
+    this.service.creationOperators();
   }
 
   sampleCreationOfObservable() {
