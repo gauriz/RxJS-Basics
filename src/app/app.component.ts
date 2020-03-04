@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OperatorsService } from './_service/operators.service';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -11,15 +10,17 @@ import { OperatorsService } from './_service/operators.service';
 export class AppComponent implements OnInit {
   title = 'RxJS-Basics';
 
-  constructor(private service: OperatorsService) {
-
-  }
+  constructor(private service: OperatorsService) {}
 
   ngOnInit() {
     // this.sampleCreationOfObservable();
     // this.observableLifeCycle();
     // this.observablesAndFunctions();
-    this.service.creationOperators();
+    // this.service.creationOperators();
+    // this.service.transformationOperators();
+    this.service.combinationOperators();
+    // this.service.errorHandlingOperators();
+    // this.service.concatOperatorExample(document.getElementById("concatEx"));
   }
 
   sampleCreationOfObservable() {
