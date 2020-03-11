@@ -8,7 +8,8 @@ import {
   timer,
   concat,
   empty,
-  throwError
+  throwError,
+  iif
 } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import {
@@ -20,7 +21,9 @@ import {
   map,
   retry,
   merge,
-  defaultIfEmpty 
+  defaultIfEmpty,
+  every,
+  mergeMap
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
@@ -51,14 +54,41 @@ export class OperatorsService {
   }
 
   conditionalOperators() {
-    this.defaultIfEmptyOperator();
+    // this.defaultIfEmptyOperator();
+    // this.everyOperator();
+    // this.iifOperator();
   }
 
   defaultIfEmptyOperator() {
-    //emit 'Observable.of() Empty!' when empty, else any values from source
     const exampleOne = of().pipe(defaultIfEmpty('Observable.of() Empty!'));
-    //output: 'Observable.of() Empty!'
-    const subscribe = exampleOne.subscribe(val => console.log(val));
+    const subscribe1 = exampleOne.subscribe(val => console.log(val));
+
+    const example = empty().pipe(defaultIfEmpty('Observable.empty()!'));
+    const subscribe2 = example.subscribe(val => console.log(val));
+  }
+
+  everyOperator() {
+    const integers = of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    const allEvens = of(2, 4, 6, 8, 10);
+    const exampleForEvenFalse = integers.pipe(every(val => val % 2 === 0));
+    const exampleForEvenTrue = allEvens.pipe(every(val => val % 2 === 0));
+    //output: false
+    const subscribeIntegers = exampleForEvenFalse.subscribe(val =>
+      console.log(val)
+    );
+    //output: true
+    const subscribeEvens = exampleForEvenTrue.subscribe(val =>
+      console.log(val)
+    );
+
+    const both = concat(integers, allEvens).pipe(every(val => val % 2 === 0));
+    const subscribeBoth = both.subscribe(val => console.log(val)); // output : false
+  }
+
+  iifOperator() {
+    interval(1000)
+      .pipe(mergeMap(v => iif(() => v % 2 === 0, of(true), of(false))))
+      .subscribe(console.log);
   }
 
   errorHandlingOperators() {
