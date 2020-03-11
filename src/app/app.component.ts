@@ -10,7 +10,7 @@ import { OperatorsService } from './_service/operators.service';
 export class AppComponent implements OnInit {
   title = 'RxJS-Basics';
 
-  constructor(private service: OperatorsService) {}
+  constructor(private service: OperatorsService) { }
 
   ngOnInit() {
     // this.sampleCreationOfObservable();
@@ -18,7 +18,8 @@ export class AppComponent implements OnInit {
     // this.observablesAndFunctions();
     // this.service.creationOperators();
     // this.service.transformationOperators();
-    this.service.combinationOperators();
+    // this.service.combinationOperators();
+    this.service.conditionalOperators();
     // this.service.errorHandlingOperators();
     // this.service.concatOperatorExample(document.getElementById("concatEx"));
   }
