@@ -31,7 +31,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class OperatorsService {
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
 
   creationOperators() {
     // this.create();
@@ -59,40 +59,8 @@ export class OperatorsService {
     // this.iifOperator();
   }
 
-  defaultIfEmptyOperator() {
-    const exampleOne = of().pipe(defaultIfEmpty('Observable.of() Empty!'));
-    const subscribe1 = exampleOne.subscribe(val => console.log(val));
-
-    const example = empty().pipe(defaultIfEmpty('Observable.empty()!'));
-    const subscribe2 = example.subscribe(val => console.log(val));
-  }
-
-  everyOperator() {
-    const integers = of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-    const allEvens = of(2, 4, 6, 8, 10);
-    const exampleForEvenFalse = integers.pipe(every(val => val % 2 === 0));
-    const exampleForEvenTrue = allEvens.pipe(every(val => val % 2 === 0));
-    //output: false
-    const subscribeIntegers = exampleForEvenFalse.subscribe(val =>
-      console.log(val)
-    );
-    //output: true
-    const subscribeEvens = exampleForEvenTrue.subscribe(val =>
-      console.log(val)
-    );
-
-    const both = concat(integers, allEvens).pipe(every(val => val % 2 === 0));
-    const subscribeBoth = both.subscribe(val => console.log(val)); // output : false
-  }
-
-  iifOperator() {
-    interval(1000)
-      .pipe(mergeMap(v => iif(() => v % 2 === 0, of(true), of(false))))
-      .subscribe(console.log);
-  }
-
   errorHandlingOperators() {
-    // this.catchError();
+    this.catchError();
     // this.retry();
   }
 
@@ -177,9 +145,9 @@ export class OperatorsService {
   }
 
   bufferTime() {
-    //Create an observable that emits a value every 500ms
+    // Create an observable that emits a value every 500ms
     const source = interval(500);
-    //After 2 seconds have passed, emit buffered values as an array
+    // After 2 seconds have passed, emit buffered values as an array
     const example = source.pipe(bufferTime(2000));
 
     const subscribe = example.subscribe(val =>
@@ -228,22 +196,64 @@ export class OperatorsService {
   }
 
   mergeOperator() {
-    //emit every 2.5 seconds
+    // emit every 2.5 seconds
     const first = interval(2500);
-    //emit every 1 second
+    // emit every 1 second
     const second = interval(1000);
-    //used as instance method
+    // used as instance method
     const example = first.pipe(merge(second));
-    //output: 0,1,0,2....
+    // output: 0,1,0,2....
     const subscribe = example.subscribe(val => console.log(val));
   }
 
+  defaultIfEmptyOperator() {
+    const exampleOne = of().pipe(defaultIfEmpty('Observable.of() Empty!'));
+    const subscribe1 = exampleOne.subscribe(val => console.log(val));
+
+    // tslint:disable-next-line: deprecation
+    const example = empty().pipe(defaultIfEmpty('Observable.empty()!'));
+    const subscribe2 = example.subscribe(val => console.log(val));
+  }
+
+  everyOperator() {
+    const integers = of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    const allEvens = of(2, 4, 6, 8, 10);
+    const exampleForEvenFalse = integers.pipe(every(val => val % 2 === 0));
+    const exampleForEvenTrue = allEvens.pipe(every(val => val % 2 === 0));
+    // output: false
+    const subscribeIntegers = exampleForEvenFalse.subscribe(val =>
+      console.log(val)
+    );
+    // output: true
+    const subscribeEvens = exampleForEvenTrue.subscribe(val =>
+      console.log(val)
+    );
+
+    const both = concat(integers, allEvens).pipe(every(val => val % 2 === 0));
+    const subscribeBoth = both.subscribe(val => console.log(val)); // output : false
+  }
+
+  iifOperator() {
+    const observable = interval(1000)
+      .pipe(
+        mergeMap(v =>
+          iif(() => v % 2 === 0,
+            of(v + ': even'),
+            of(v + ': not even'))
+        )
+      )
+      .subscribe(console.log);
+    setTimeout(() => {
+      observable.unsubscribe();
+    }, 10000);
+  }
+
   catchError() {
-    //emit error
+    // emit error
     const source = throwError('This is an error!');
-    //gracefully handle error, returning observable with error message
+    // gracefully handle error, returning observable with error message
     const example = source.pipe(catchError(val => of(`I caught: ` + val)));
-    //output: 'I caught: This is an error'
+    // output: 'I caught: This is an error'
     const subscribe = example.subscribe(val => console.log(val));
 
     this.httpClient

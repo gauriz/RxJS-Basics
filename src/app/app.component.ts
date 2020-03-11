@@ -19,8 +19,8 @@ export class AppComponent implements OnInit {
     // this.service.creationOperators();
     // this.service.transformationOperators();
     // this.service.combinationOperators();
-    this.service.conditionalOperators();
-    // this.service.errorHandlingOperators();
+    // this.service.conditionalOperators();
+    this.service.errorHandlingOperators();
     // this.service.concatOperatorExample(document.getElementById("concatEx"));
   }
 
