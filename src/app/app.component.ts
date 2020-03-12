@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OperatorsService } from './_service/operators.service';
+import { fromEvent } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -9,18 +11,20 @@ import { OperatorsService } from './_service/operators.service';
 })
 export class AppComponent implements OnInit {
   title = 'RxJS-Basics';
-
   constructor(private service: OperatorsService) { }
 
   ngOnInit() {
-    // this.sampleCreationOfObservable();
+    this.sampleCreationOfObservable();
     // this.observableLifeCycle();
     // this.observablesAndFunctions();
     // this.service.creationOperators();
-    // this.service.transformationOperators();
     // this.service.combinationOperators();
     // this.service.conditionalOperators();
-    this.service.errorHandlingOperators();
+    // this.service.errorHandlingOperators();
+    // this.service.filteringOperators();
+    // this.service.transformationOperators();
+    // this.service.utilityOperators();
+    // this.filteringKeyUp();
     // this.service.concatOperatorExample(document.getElementById("concatEx"));
   }
 
@@ -93,6 +97,20 @@ export class AppComponent implements OnInit {
     obs3.subscribe(data => {
       console.log('From obs3 :', data);
     });
+  }
+
+
+  filteringKeyUp() {
+    const searchBox = document.getElementById('search');
+    const keyupEvent = fromEvent(searchBox, 'keyup');
+
+    // wait .5s between keyups to emit current value
+    keyupEvent
+      .pipe(
+        map((i: any) => i.currentTarget.value),
+        debounceTime(500)
+      )
+      .subscribe(console.log);
   }
 
   simpleFunction() {

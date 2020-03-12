@@ -9,7 +9,8 @@ import {
   concat,
   empty,
   throwError,
-  iif
+  iif,
+  forkJoin
 } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import {
@@ -23,7 +24,14 @@ import {
   merge,
   defaultIfEmpty,
   every,
-  mergeMap
+  mergeMap,
+  distinctUntilChanged,
+  filter,
+  take,
+  switchMap,
+  tap,
+  reduce,
+  finalize
 } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
@@ -34,7 +42,7 @@ export class OperatorsService {
   constructor(private httpClient: HttpClient) { }
 
   creationOperators() {
-    // this.create();
+    this.create();
     // this.ajax();
     // this.fromOperator();
     // this.intervalOperator();
@@ -42,19 +50,16 @@ export class OperatorsService {
     // this.timerOperator();
   }
 
-  transformationOperators() {
-    // Transforms an input observable as a new one
-    // this.bufferTime();
-  }
 
   combinationOperators() {
-    // this.startWithOperator();
+    this.startWithOperator();
     // this.concatOperator();
     // this.mergeOperator();
+    // this.forkJoinOperator();
   }
 
   conditionalOperators() {
-    // this.defaultIfEmptyOperator();
+    this.defaultIfEmptyOperator();
     // this.everyOperator();
     // this.iifOperator();
   }
@@ -64,6 +69,26 @@ export class OperatorsService {
     // this.retry();
   }
 
+  filteringOperators() {
+    this.distinctUntilChangedOperator();
+    // this.filterOperator();
+    // this.takeOperator();
+  }
+
+  transformationOperators() {
+    // Transforms an input observable as a new one
+    // this.bufferTime();
+    this.mapOperator();
+    // this.switchMapOperator();
+    // this.reduceOperator();
+  }
+
+  utilityOperators() {
+    this.tapOperator();
+    // this.finalizeOperator();
+  }
+
+  // Create Operators
   create() {
     const createOperator = Observable.create(observer => {
       observer.next('Hello');
@@ -144,21 +169,7 @@ export class OperatorsService {
     // output: 0,1,2,3,4,5......
   }
 
-  bufferTime() {
-    // Create an observable that emits a value every 500ms
-    const source = interval(500);
-    // After 2 seconds have passed, emit buffered values as an array
-    const example = source.pipe(bufferTime(2000));
-
-    const subscribe = example.subscribe(val =>
-      console.log('Buffered with Time:', val)
-    );
-
-    setTimeout(() => {
-      subscribe.unsubscribe();
-    }, 10000);
-  }
-
+  // Combination Operators
   startWithOperator() {
     const source = of(1, 2, 3); // or from([1,2,3])
     const example = source.pipe(
@@ -206,6 +217,14 @@ export class OperatorsService {
     const subscribe = example.subscribe(val => console.log(val));
   }
 
+  forkJoinOperator() {
+    forkJoin(
+      ajax.getJSON('https://api.github.com/users/google'),
+      ajax.getJSON('https://api.github.com/users/microsoft')
+    ).subscribe(console.log);
+  }
+
+  // Conditional Operators
   defaultIfEmptyOperator() {
     const exampleOne = of().pipe(defaultIfEmpty('Observable.of() Empty!'));
     const subscribe1 = exampleOne.subscribe(val => console.log(val));
@@ -237,9 +256,7 @@ export class OperatorsService {
     const observable = interval(1000)
       .pipe(
         mergeMap(v =>
-          iif(() => v % 2 === 0,
-            of(v + ': even'),
-            of(v + ': not even'))
+          iif(() => v % 2 === 0, of(v + ': even'), of(v + ': not even'))
         )
       )
       .subscribe(console.log);
@@ -248,6 +265,7 @@ export class OperatorsService {
     }, 10000);
   }
 
+  // Error handling operators
   catchError() {
     // emit error
     const source = throwError('This is an error!');
@@ -257,7 +275,7 @@ export class OperatorsService {
     const subscribe = example.subscribe(val => console.log(val));
 
     this.httpClient
-      .get('	https://dummy.restapiexample.com/api/v1/employees', {
+      .get('https://dummy.restapiexample.com/api/v1/employees', {
         // headers: this.setHeaders(),
         // params: parameters
       })
@@ -297,4 +315,136 @@ export class OperatorsService {
     console.log('HTTP ERROR', err.message);
     return of(err);
   }
+
+  // Filtering Operators
+  distinctUntilChangedOperator() {
+    const source = from([1, 1, 2, 2, 3, 3]);
+    let subscription = source
+      .pipe(distinctUntilChanged())
+      // output: 1,2,3
+      .subscribe(console.log);
+
+    subscription.unsubscribe();
+
+    const source2 = from([
+      { name: 'Brian' },
+      { name: 'Joe' },
+      { name: 'Joe' },
+      { name: 'Sue' }
+    ]);
+
+    subscription = source2
+      .pipe(distinctUntilChanged((prev, curr) => prev.name === curr.name))
+      // output will be objects of Brian, Joe and Sue (3)
+      .subscribe(console.log);
+
+    subscription.unsubscribe();
+  }
+
+  filterOperator() {
+    const source = interval(1000);
+    const example = source.pipe(filter(num => num > 5 && num < 10));
+    const subscribe = example.subscribe(val => console.log(`: ${val}`));
+  }
+
+  takeOperator() {
+    const source = of(1, 2, 3, 4, 5);
+    const example = source.pipe(take(3));
+    const subscribe = example.subscribe(console.log);
+  }
+
+  // Transformation Operators
+
+  bufferTime() {
+    // Create an observable that emits a value every 500ms
+    const source = interval(500);
+    // After 2 seconds have passed, emit buffered values as an array
+    const example = source.pipe(bufferTime(2000));
+
+    const subscribe = example.subscribe(val =>
+      console.log('Buffered with Time:', val)
+    );
+
+    setTimeout(() => {
+      subscribe.unsubscribe();
+    }, 10000);
+  }
+
+  mapOperator() {
+    const arraySource = from([1, 2, 3, 4, 5]);
+    const arrayObservable = arraySource.pipe(map(val => val + 10));
+    const arraySubscription = arrayObservable.subscribe(val =>
+      console.log(val)
+    );
+
+    const jsonSource = from([
+      { name: 'Joe', age: 30 },
+      { name: 'Frank', age: 20 },
+      { name: 'Ryan', age: 50 }
+    ]);
+    const jsonObservable = jsonSource.pipe(map(({ name }) => name));
+    const jsonSubscription = jsonObservable.subscribe(val => console.log(val));
+
+    arraySubscription.unsubscribe();
+    jsonSubscription.unsubscribe();
+  }
+
+  switchMapOperator() {
+    const employees = this.httpClient.get(
+      'https://dummy.restapiexample.com/api/v1/employees'
+    );
+    const users = this.httpClient.get(
+      'https://jsonplaceholder.typicode.com/users'
+    );
+    empty()
+      .pipe(
+        switchMap(emp => {
+          return employees;
+        }),
+        switchMap(user => {
+          return users;
+        })
+      )
+      .subscribe(data => {
+        console.log(data);
+      });
+  }
+
+  reduceOperator() {
+    const source = of(1, 2, 3, 4);
+    const example = source.pipe(reduce((acc, val) => acc + val));
+    const subscribe = example.subscribe(val => console.log('Sum:', val));
+  }
+
+  // Utility Operators
+
+  tapOperator() {
+    const source = of(1, 2, 3, 4, 5);
+    const example = source
+      .pipe(
+        tap(val => console.log(`BEFORE MAP:`, val)),
+        map(val => val + 10),
+        tap(val => console.log(`AFTER MAP: `, val))
+      )
+      .subscribe();
+  }
+
+  finalizeOperator() {
+    const source = interval(1000);
+    const example = source.pipe(
+      take(5),
+      finalize(() => console.log('Sequence complete'))
+    );
+    const subscribe = example.subscribe(val => console.log(val));
+  }
+
+
+
+
+
+
+
+
+
+
 }
