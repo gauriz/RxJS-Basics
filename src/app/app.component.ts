@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { OperatorsService } from './_service/operators.service';
 import { fromEvent } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
+import { SubjectsService } from './_service/subjects.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ import { debounceTime, map } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
   title = 'RxJS-Basics';
-  constructor(private service: OperatorsService) { }
+  constructor(private service: OperatorsService, private subject: SubjectsService) { }
 
   ngOnInit() {
     this.sampleCreationOfObservable();
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
     // this.service.utilityOperators();
     // this.filteringKeyUp();
     // this.service.concatOperatorExample(document.getElementById("concatEx"));
+    this.subject.subjectExamples();
   }
 
   sampleCreationOfObservable() {
@@ -116,4 +118,5 @@ export class AppComponent implements OnInit {
   simpleFunction() {
     return 100;
   }
+
 }
