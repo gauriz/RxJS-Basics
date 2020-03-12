@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   constructor(private service: OperatorsService, private subject: SubjectsService) { }
 
   ngOnInit() {
-    this.sampleCreationOfObservable();
+    // this.sampleCreationOfObservable();
     // this.observableLifeCycle();
     // this.observablesAndFunctions();
     // this.service.creationOperators();
@@ -35,6 +35,9 @@ export class AppComponent implements OnInit {
       observer.next('Hello World!');
     });
 
+    observable.subscribe(data => {
+      console.log(data);
+    });
     observable.subscribe(data => {
       console.log(data);
     });
