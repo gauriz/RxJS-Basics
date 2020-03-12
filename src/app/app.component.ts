@@ -38,9 +38,6 @@ export class AppComponent implements OnInit {
     observable.subscribe(data => {
       console.log(data);
     });
-    observable.subscribe(data => {
-      console.log(data);
-    });
   }
 
   observableLifeCycle() {
