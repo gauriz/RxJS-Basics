@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   constructor(private service: OperatorsService, private subject: SubjectsService) { }
 
   ngOnInit() {
-    // this.sampleCreationOfObservable();
+    this.sampleCreationOfObservable();
     // this.observableLifeCycle();
     // this.observablesAndFunctions();
     // this.service.creationOperators();
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
     // this.service.utilityOperators();
     // this.filteringKeyUp();
     // this.service.concatOperatorExample(document.getElementById("concatEx"));
-    this.subject.subjectExamples();
+    // this.subject.subjectExamples();
   }
 
   sampleCreationOfObservable() {
@@ -121,5 +121,4 @@ export class AppComponent implements OnInit {
   simpleFunction() {
     return 100;
   }
-
 }

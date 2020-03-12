@@ -437,14 +437,4 @@ export class OperatorsService {
     );
     const subscribe = example.subscribe(val => console.log(val));
   }
-
-
-
-
-
-
-
-
-
-
 }
